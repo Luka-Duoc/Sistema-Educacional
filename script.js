@@ -13,10 +13,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const n2 = parseFloat(document.getElementById("nota2").value);
             const n3 = parseFloat(document.getElementById("nota3").value);
 
+            const porc = parseFloat(document.getElementById("asistencia").value);
+
             if (nombre === "" || apellido === "") {
                 alert("El nombre y/o apellido no deben estar vacio.")
                 return;
-            };
+            }
 
             const notas = [n1, n2, n3];
             const validar = notas.every(n => !isNaN(n) && n >= 1.0 && n <= 7.0);
@@ -26,18 +28,50 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            const promedio = (n1 * 0.30) + (n2 * 0.40) + (n3 * 0.30)
-            const aprobado = promedio >= 4.0;
-            const estado = aprobado ? "Aprobado" : "Reprobado";
-            const badgeClass = aprobado ? "text-success fw-bold" : "text-danger fw-bold";
+            if (isNaN(porc) || porc < 0 || porc > 100) {
+                alert("La asistencia debe ser entre  0 a 100")
+                return;
+            }
 
-            const clasePromedio = promedio < 4.0 ? "text-danger fw-bold" : ""
+
+            const promedio = (n1 * 0.30) + (n2 * 0.40) + (n3 * 0.30)            
+            const clasePromedio = promedio < 4.0 ? "text-danger fw-bold" : "";
+
+            let estado = "";
+            let badgeClass = ""
+
+            if (porc < 60) {
+                estado = "Reprobado por inasistencia";
+                badgeClass = "text-warning fw-bold";
+            } else if (porc <= 69.9) {
+
+                if (promedio >= 5.0) {
+                    estado = "Aprobado";
+                    badgeClass = "text-success fw-bold";
+                } else {
+                    estado = "Reprobado";
+                    badgeClass = "text-danger fw-bold"
+                }
+
+            } else {
+                if (promedio >= 4.0) {
+                    estado = "Aprobado";
+                    badgeClass = "text-success fw-bold";
+                } else {
+                    estado = "Reprobado";
+                    badgeClass = "text-danger fw-bold"
+                }
+            }
 
             tabla.innerHTML += ` 
                 <tr>
                     <td> ${nombre} </td>
                     <td> ${apellido} </td>
+                    <td> ${n1} </td>
+                    <td> ${n2} </td>
+                    <td> ${n3} </td>
                     <td class="${clasePromedio}"> ${promedio.toFixed(1)} </td>
+                    <td>  ${porc}%  </td>
                     <td class="${badgeClass}"> ${estado} </td>
                 </tr>
             `;
